@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply text-gray-900 antialiased dark:text-gray-100 min-h-screen bg-fixed;
+    background: linear-gradient(135deg, #e4ebd9 0%, #fce7f3 50%, #dcd0f7 100%);
+  }
+  
+  .dark body {
+    background: linear-gradient(135deg, #0d120f 0%, #17110c 50%, #170d12 100%);
+  }
+}
+
+@layer components {
+  .pastel-mesh-bg {
+    background: linear-gradient(135deg, #e4ebd9 0%, #fce7f3 50%, #dcd0f7 100%);
+  }
+  
+  .dark .pastel-mesh-bg {
+    background: linear-gradient(135deg, #0d120f 0%, #17110c 50%, #170d12 100%);
+  }
+
+  @keyframes float-slow {
+    0%, 100% { transform: translateY(0) translateX(0); }
+    50% { transform: translateY(-20px) translateX(8px); }
+  }
+
+  @keyframes float-medium {
+    0%, 100% { transform: translateY(0) translateX(0); }
+    50% { transform: translateY(-14px) translateX(-6px); }
+  }
+
+  @keyframes float-fast {
+    0%, 100% { transform: translateY(0) translateX(0); }
+    50% { transform: translateY(-10px) translateX(5px); }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+
+  @keyframes slide-in {
+    from {
+      transform: translateX(-35px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-float-slow {
+    animation: float-slow 8s ease-in-out infinite;
+  }
+
+  .animate-float-medium {
+    animation: float-medium 6s ease-in-out infinite;
+  }
+
+  .animate-float-fast {
+    animation: float-fast 4.5s ease-in-out infinite;
+  }
+
+  .animate-float {
+    animation: float 5s ease-in-out infinite;
+  }
+
+  .animate-slide-in {
+    animation: slide-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .glass-panel {
+    @apply bg-white/20 backdrop-blur-xl border border-white/30 shadow-lg dark:bg-black/25 dark:border-white/10;
+  }
+
+  .shell-header {
+    @apply flex h-[5.5rem] shrink-0 items-center border-b border-white/20 bg-white/10 backdrop-blur-md dark:border-white/10 dark:bg-black/15;
+  }
+
+  .app-shell-border-r {
+    @apply border-r border-white/25 dark:border-white/10;
+  }
+
+  .app-shell-border-t {
+    @apply border-t border-white/25 dark:border-white/10;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-md transition duration-200 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:focus:ring-offset-gray-900;
+    background-color: #84cc16 !important;
+  }
+
+  .btn-primary:hover {
+    background-color: #65a30d !important;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/40 bg-white/20 px-5 py-2.5 text-sm font-semibold text-gray-700 shadow-sm backdrop-blur-md transition duration-200 hover:bg-white/40 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/10 dark:bg-black/30 dark:text-gray-200 dark:hover:bg-black/50 dark:focus:ring-offset-gray-900;
+  }
+
+  .input-field {
+    @apply w-full rounded-full border border-white/30 bg-white/20 px-5 py-2.5 text-sm text-gray-900 placeholder-gray-400 backdrop-blur-md shadow-inner transition duration-200 focus:bg-white/45 focus:outline-none focus:ring-2 dark:border-white/10 dark:bg-black/20 dark:text-gray-100 dark:placeholder-gray-500 dark:focus:bg-black/45;
+  }
+  
+  .input-field:focus {
+    border-color: #a3e635 !important;
+    --tw-ring-color: rgba(163, 230, 53, 0.25) !important;
+  }
+
+  /* Centralized Lime Color Overrides to bypass browser caching */
+  .text-primary-600, .text-primary-700 {
+    color: #65a30d !important;
+  }
+
+  .hover\:text-primary-600:hover, .hover\:text-primary-700:hover {
+    color: #4d7c0f !important;
+  }
+
+  .dark .text-primary-600, .dark .text-primary-700 {
+    color: #bef264 !important;
+  }
+
+  .dark .hover\:text-primary-600:hover, .dark .hover\:text-primary-700:hover {
+    color: #d9f99d !important;
+  }
+
+  .card {
+    @apply rounded-3xl border border-white/40 bg-white/25 p-6 backdrop-blur-md shadow-sm transition duration-200 dark:border-white/10 dark:bg-black/15;
+  }
+
+  /* Placeholder for contenteditable */
+  [contenteditable]:empty::before {
+    content: attr(placeholder);
+    color: #9ca3af;
+    font-style: italic;
+    cursor: text;
+  }
+}
