@@ -6,6 +6,32 @@ import { HTTP_STATUS, PERMISSIONS } from '../constants/index.js';
 import { parsePagination, buildPaginationMeta } from '../utils/pagination.js';
 import sanitizeHtml from 'sanitize-html';
 
+// Safe sanitizer options: allow common markdown-generated tags but strip scripts and unsafe attributes
+const SANITIZE_OPTIONS = {
+  allowedTags: ['p', 'br', 'b', 'i', 'em', 'strong', 'a', 'ul', 'ol', 'li', 'code', 'pre', 'h1', 'h2', 'h3', 'blockquote'],
+  allowedAttributes: {
+    a: ['href', 'name', 'target', 'rel'],
+    // Allow classes for styling, but no inline event handlers
+    '*': ['class'],
+  },
+  // Only allow safe URL schemes on href/src
+  allowedSchemes: ['http', 'https', 'mailto'],
+  allowProtocolRelative: false,
+  transformTags: {
+    'a': (tagName, attribs) => {
+      const href = attribs.href || '';
+      return {
+        tagName: 'a',
+        attribs: {
+          href,
+          rel: 'noopener noreferrer',
+          target: '_blank',
+        },
+      };
+    },
+  },
+};
+
 const toUserId = (userId) => userId?.toString?.() ?? userId;
 
 class NoteService {
@@ -115,7 +141,7 @@ class NoteService {
     // Strip any embedded HTML from content before saving to prevent stored XSS
     const payload = {
       ...data,
-      content: sanitizeHtml(data.content || '', { allowedTags: [], allowedAttributes: {} }),
+      content: sanitizeHtml(data.content || '', SANITIZE_OPTIONS),
       owner: uid,
     };
 
@@ -157,7 +183,7 @@ class NoteService {
 
     // Sanitize any HTML in incoming content to avoid storing raw HTML
     if (data.content !== undefined) {
-      updatePayload.content = sanitizeHtml(data.content || '', { allowedTags: [], allowedAttributes: {} });
+      updatePayload.content = sanitizeHtml(data.content || '', SANITIZE_OPTIONS);
     }
 
     if (versionWorthy) {
