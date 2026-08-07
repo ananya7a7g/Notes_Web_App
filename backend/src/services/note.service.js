@@ -4,6 +4,7 @@ import userRepository from '../repositories/user.repository.js';
 import { AppError } from '../utils/AppError.js';
 import { HTTP_STATUS, PERMISSIONS } from '../constants/index.js';
 import { parsePagination, buildPaginationMeta } from '../utils/pagination.js';
+import sanitizeHtml from 'sanitize-html';
 
 const toUserId = (userId) => userId?.toString?.() ?? userId;
 
@@ -110,10 +111,15 @@ class NoteService {
 
   async createNote(userId, data) {
     const uid = toUserId(userId);
-    const note = await noteRepository.create({
+
+    // Strip any embedded HTML from content before saving to prevent stored XSS
+    const payload = {
       ...data,
+      content: sanitizeHtml(data.content || '', { allowedTags: [], allowedAttributes: {} }),
       owner: uid,
-    });
+    };
+
+    const note = await noteRepository.create(payload);
 
     await noteVersionRepository.create({
       noteId: note._id,
@@ -148,6 +154,11 @@ class NoteService {
 
     const versionWorthy = this.#contentFieldsChanged(existing, data);
     const updatePayload = { ...data };
+
+    // Sanitize any HTML in incoming content to avoid storing raw HTML
+    if (data.content !== undefined) {
+      updatePayload.content = sanitizeHtml(data.content || '', { allowedTags: [], allowedAttributes: {} });
+    }
 
     if (versionWorthy) {
       updatePayload.$inc = { versionCount: 1 };

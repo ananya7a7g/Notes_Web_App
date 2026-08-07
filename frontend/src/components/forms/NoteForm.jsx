@@ -5,31 +5,35 @@ import { Button } from '../ui/Button.jsx';
 import { validateNote } from '../../validations/note.validation.js';
 import { Pin, Eye, Edit2, Bold, Italic, Heading, List, CheckSquare, Code } from 'lucide-react';
 import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 
-// Convert Markdown to HTML for the contenteditable editor
+// Convert Markdown to HTML for the contenteditable editor (sanitized)
 const markdownToHtml = (markdown) => {
   if (!markdown) return '<div><br></div>';
   try {
-    let html = marked.parse(markdown);
-    
+    // Render markdown to HTML then sanitize to remove any raw HTML/script tags
+    const raw = marked.parse(markdown);
+    let html = DOMPurify.sanitize(raw);
+
     // First, remove disabled attribute so checkboxes are clickable inside contenteditable
     html = html.replace(/disabled=""/gi, '');
     html = html.replace(/disabled/gi, '');
-    
+
     // Next, style checked items to be green and crossed out
     html = html.replace(/<li[^>]*>\s*<input[^>]*checked[^>]*>\s*(.*?)\s*<\/li>/gi, (match, text) => {
       return `<li class="task-list-item flex items-center" style="text-decoration: line-through; color: #10b981;"><input type="checkbox" checked="checked" class="mr-2 h-4 w-4 rounded border-gray-300 accent-emerald-500 cursor-pointer" /> ${text}</li>`;
     });
-    
+
     // Match unchecked tasks
     html = html.replace(/<li[^>]*>\s*<input[^>]*>\s*(.*?)\s*<\/li>/gi, (match, text) => {
       if (match.includes('checked') || match.includes('text-decoration: line-through')) return match;
       return `<li class="task-list-item flex items-center"><input type="checkbox" class="mr-2 h-4 w-4 rounded border-gray-300 accent-emerald-500 cursor-pointer" /> ${text}</li>`;
     });
-    
+
     return html;
   } catch (e) {
-    return markdown;
+    // On error, return a safe empty editor content
+    return '<div><br></div>';
   }
 };
 
